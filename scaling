@@ -2,7 +2,7 @@ resource "aws_appautoscaling_target" "Write" {
   max_capacity       = 20
   min_capacity       = 1
   resource_id        = "table/${var.table_name}"
-  role_arn           = "arn:aws:iam::706737937272:role/ddb-role"
+  role_arn           = "arn:aws:iam:account-id:role/ddb-role"
   scalable_dimension = "dynamodb:table:WriteCapacityUnits"
   service_namespace  = "dynamodb"
 }
