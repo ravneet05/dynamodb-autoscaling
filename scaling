@@ -1,0 +1,24 @@
+resource "aws_appautoscaling_target" "Write" {
+  max_capacity       = 20
+  min_capacity       = 1
+  resource_id        = "table/${var.table_name}"
+  role_arn           = "arn:aws:iam::706737937272:role/ddb-role"
+  scalable_dimension = "dynamodb:table:WriteCapacityUnits"
+  service_namespace  = "dynamodb"
+}
+resource "aws_appautoscaling_policy" "Write" {
+  name = "${aws_appautoscaling_target.Write.id}"
+  service_namespace = "dynamodb"
+  policy_type = "TargetTrackingScaling"
+  resource_id = "table/${var.table_name}"
+  scalable_dimension = "dynamodb:table:WriteCapacityUnits"
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "DynamoDBWriteCapacityUtilization"
+    }
+    scale_in_cooldown = 10
+    scale_out_cooldown = 10
+    target_value = 70
+  }
+  depends_on = ["aws_appautoscaling_target.Write"]
+}
